@@ -84,7 +84,14 @@ class Tile:
         self.heading = heading
 
         ## TODO: Calculate the new position
-        ## self.position = 
+        x_pos = self.heading[0]
+        y_pos = self.heading[1]
+
+        x_pos_snake = self.position[0]
+        y_pos_snake = self.position[1]
+        
+
+        self.position = (x_pos_snake + x_pos, y_pos_snake + y_pos)
 
 ##----------------------------------------------------------------------------##
 
@@ -140,9 +147,26 @@ class Snake:
 
     ## Add a tile to the end of the snake
     def addSegment(self):
-        ## TODO
-        pass
+        self.heading = self.body[len(self.body)-1].heading
+        if self.heading == UP:
+            self.opposite = DOWN
+        elif self.heading == RIGHT:
+            self.opposite = LEFT
+        elif self.heading == DOWN:
+            self.opposite = UP
+        elif self.heading == LEFT:
+            self.opposite = RIGHT
+        self.last_x = self.body[len(self.body)-1].position[0] #current last block on snake (x)
+        self.last_y = self.body[len(self.body)-1].position[1] #current last block on snake (y)
 
+        self.direct_x = self.opposite[0] #direction (x)
+        self.direct_y = self.opposite[1] #direction (y)
+
+        self.new_x = self.last_x + self.direct_x #new (x)
+        self.new_y = self.last_y + self.direct_y #new (y)
+
+        self.body.append(Tile((self.new_x,self.new_y),self.heading, RED))
+    
 ##----------------------------------------------------------------------------##
 
 ## Object that runs the game
@@ -152,12 +176,11 @@ class Snake:
 class SnakeGame:
     def __init__(self):
         ## TODO: The game needs a snake!
-        self.snake = None
-
+        self.snake = Snake((0, 0))
         ## TODO: Make a green tile to represent the food
         ## The position of the food tile should be randomly generated using randomPosition()
-        self.food = None
-
+        self.food = Tile((self.randomPosition()), STOP, GREEN)
+        
         
     ## Draws the next frame of the game
     def redrawWindow(self, surface):
@@ -170,23 +193,33 @@ class SnakeGame:
     ## Generate a random position that is not occupied
     def randomPosition(self):
         ## TODO: Generate a random (x, y) position
-        x = 1
-        y = 1
+        x = COLUMNS 
+        y = ROWS
 
         ## TODO: Make sure that the snake is not already at (x, y)
         ## Keep generating random positions until we find an empty position
+        x = random.randint(1, COLUMNS-2)
+        y = random.randint(1, ROWS-2)
+        
+        for self.block in self.snake.body:
+            if self.block.position[0] == x or self.block.position[1] == y:
+                self.randomPosition()
 
-        
-        
         return x, y
 
 
     ## Return True if the snake has run into itself
     def game_over(self):
         snake = self.snake
-        
-        ## TODO: Check if any part of the snake is overlapping
-        
+    
+        ## TODO: Check if any part of the snake is overlapping            
+        for self.i in range(0, len(snake.body)-1):
+            for self.m in range(self.i+1, len(snake.body)-1):
+                self.i_thing = snake.body[self.i]
+                self.m_thing = snake.body[self.m] 
+                if (self.i_thing.position[0] == self.m_thing.position[0] and
+                    self.i_thing.position[1] == self.m_thing.position[1]):
+                    return True
         return False
 
 
@@ -196,9 +229,10 @@ class SnakeGame:
     def snake_on_food(self):
         snake = self.snake
         food = self.food
-
-        ## TODO
-        
+        for self.block in snake.body:
+            if (self.block.position[0] == food.position[0] and
+                self.block.position[1] == food.position[1]):
+                return True
         return False
 
     
@@ -207,9 +241,11 @@ class SnakeGame:
     ## Return False if the snake is still on screen
     def check_bounds(self):
         snake = self.snake
-
-        ## TODO
         
+        for self.block in snake.body:
+            if (self.block.position[0] < 0 or self.block.position[0] == COLUMNS or
+            self.block.position[1] < 0 or self.block.position[1] == ROWS):
+                return True        
         return False
         
     ## Run the game
@@ -221,15 +257,17 @@ class SnakeGame:
         food = self.food
         
         while True:
-            clock.tick(10)
+            clock.tick(12)
             snake.move()
             out_of_bounds = self.check_bounds()
             
             if self.snake_on_food():
                 ## TODO: If the snake has gotten the food, grow the snake
                 ## Also, move the food to a random new position
-                pass
-     
+                self.rand_pos = (self.randomPosition())
+                self.food = Tile(self.rand_pos,STOP,GREEN)
+                snake.addSegment()
+                
             if out_of_bounds or self.game_over():
                 print('Game Over\nScore: {0}\nUse \"snake_game.start()\" to play again.'.format(len(snake.body)))
                 self.__init__()
