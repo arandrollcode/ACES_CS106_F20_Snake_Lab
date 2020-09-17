@@ -24,8 +24,8 @@ GREEN = (0, 255, 0)
 ##----------------------------------------------------------------------------##
 
 ## Game Dimensions (Pixels)
-WINDOW_WIDTH   = 750
-WINDOW_HEIGHT  = 650
+WINDOW_WIDTH   = 850
+WINDOW_HEIGHT  = 600
 TILE_DIMENSION = 25
 
 if WINDOW_WIDTH % TILE_DIMENSION != 0:
@@ -176,7 +176,7 @@ class Snake:
 class SnakeGame:
     def __init__(self):
         ## TODO: The game needs a snake!
-        self.snake = Snake((0, 0))
+        self.snake = Snake((1, ROWS - 2))
         ## TODO: Make a green tile to represent the food
         ## The position of the food tile should be randomly generated using randomPosition()
         self.food = Tile((self.randomPosition()), STOP, GREEN)
@@ -193,8 +193,8 @@ class SnakeGame:
     ## Generate a random position that is not occupied
     def randomPosition(self):
         ## TODO: Generate a random (x, y) position
-        x = COLUMNS 
-        y = ROWS
+        x = 1 
+        y = 1
 
         ## TODO: Make sure that the snake is not already at (x, y)
         ## Keep generating random positions until we find an empty position
@@ -202,7 +202,7 @@ class SnakeGame:
         y = random.randint(1, ROWS-2)
         
         for self.block in self.snake.body:
-            if self.block.position[0] == x or self.block.position[1] == y:
+            if self.block.position[0] == x and self.block.position[1] == y:
                 self.randomPosition()
 
         return x, y
@@ -263,9 +263,8 @@ class SnakeGame:
             
             if self.snake_on_food():
                 ## TODO: If the snake has gotten the food, grow the snake
-                ## Also, move the food to a random new position
-                self.rand_pos = (self.randomPosition())
-                self.food = Tile(self.rand_pos,STOP,GREEN)
+                ## Also, move the food to a random new position                
+                self.food = Tile((self.randomPosition()),STOP,GREEN)
                 snake.addSegment()
                 
             if out_of_bounds or self.game_over():
