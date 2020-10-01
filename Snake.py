@@ -213,12 +213,12 @@ class SnakeGame:
         snake = self.snake
     
         ## TODO: Check if any part of the snake is overlapping            
-        for self.i in range(0, len(snake.body)-1):
-            for self.m in range(self.i+1, len(snake.body)-1):
-                self.i_thing = snake.body[self.i]
-                self.m_thing = snake.body[self.m] 
-                if (self.i_thing.position[0] == self.m_thing.position[0] and
-                    self.i_thing.position[1] == self.m_thing.position[1]):
+        for i in range(0, len(snake.body)):
+            for m in range(i+1, len(snake.body)):
+                i_thing = snake.body[i]
+                m_thing = snake.body[m] 
+                if (i_thing.position[0] == m_thing.position[0] and
+                    i_thing.position[1] == m_thing.position[1]):
                     return True
         return False
 
@@ -229,9 +229,9 @@ class SnakeGame:
     def snake_on_food(self):
         snake = self.snake
         food = self.food
-        for self.block in snake.body:
-            if (self.block.position[0] == food.position[0] and
-                self.block.position[1] == food.position[1]):
+        for block in snake.body:
+            if (block.position[0] == food.position[0] and
+                block.position[1] == food.position[1]):
                 return True
         return False
 
@@ -242,9 +242,9 @@ class SnakeGame:
     def check_bounds(self):
         snake = self.snake
         
-        for self.block in snake.body:
-            if (self.block.position[0] < 0 or self.block.position[0] == COLUMNS or
-            self.block.position[1] < 0 or self.block.position[1] == ROWS):
+        for block in snake.body:
+            if (block.position[0] < 0 or block.position[0] == COLUMNS or
+            block.position[1] < 0 or block.position[1] == ROWS):
                 return True        
         return False
         
